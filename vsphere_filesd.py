@@ -103,10 +103,10 @@ def getenv(name, default=None, required=False):
 
 
 def main():
-    server = getenv('VSPHERE_SERVER', required=True)
-    username = getenv('VSPHERE_USERNAME', required=True)
+    server = getenv('VSPHERE_HOST', required=True)
+    username = getenv('VSPHERE_USER', required=True)
     password = getenv('VSPHERE_PASSWORD', required=True)
-    insecure = getenv('VSPHERE_INSECURE', required=True)
+    insecure = getenv('VSPHERE_IGNORE_SSL', required=True)
     include = getenv('INCLUDE_TAGS', '').split()
     filename = getenv('OUTPUT_FILENAME', '/etc/prometheus/vsphere.json')
     interval = int(getenv('DISCOVERY_INTERVAL', '300'))
