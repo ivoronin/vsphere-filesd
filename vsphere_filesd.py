@@ -97,7 +97,7 @@ def getenv(name, default=None, required=False):
     value = os.environ.get(name)
     if not value and required:
         raise Exception(f'{name} is not set')
-    if not value and default:
+    if not value and default is not None:
         return default
     return value
 
