@@ -88,7 +88,7 @@ scrape_configs:
     {
         "labels": {
             "guest_family": "WINDOWS",
-            "guest_host_name": "app01"
+            "guest_host_name": "app01",
             "guest_ip_address": "10.0.1.68",
             "guest_name": "WINDOWS_9_SERVER_64",
             "id": "vm-7502",
