@@ -60,29 +60,29 @@ def discover(server, username, password, insecure, include, filename):
             logging.info("Skipping %s, cannot get guest identity (check if vm tools are running)", vm.name)
             continue
 
-        if include:
-            dynamic_id = DynamicID(type='VirtualMachine', id=vm.vm)
-            for tag_id in vsphere_client.tagging.TagAssociation.list_attached_tags(dynamic_id):
-                tag_name = tag_names[tag_id]
-                category_name = category_names[tag_category_ids[tag_id]]
-                for category_tag in include:
-                    if category_tag == f'{category_name}:{tag_name}':
-                        break
-                else:
-                    # Current tag does not match, continue to the next one
-                    continue
-                # Current tag matches filter, exit loop
-                break
-            else:
-                logging.info("Skipping %s, tags do not match", vm.name)
-                # All tags does not match, contnue to the next vm
-                continue
+        dynamic_id = DynamicID(type='VirtualMachine', id=vm.vm)
+        match = False
+        tags = []
+        for tag_id in vsphere_client.tagging.TagAssociation.list_attached_tags(dynamic_id):
+            tag_name = tag_names[tag_id]
+            category_name = category_names[tag_category_ids[tag_id]]
+            category_tag = f'{category_name}:{tag_name}'
+            tags.append(category_tag)
+            for needle in include:
+                if needle == category_tag:
+                    match = True
+
+        if include and not match:
+            logging.info("Skipping %s, tags do not match", vm.name)
+            # All tags does not match, contnue to the next vm
+            continue
 
         logging.info("Including %s (%s)", vm.name, identity.ip_address)
         vms.append({
             'targets': [vm.name],
             'labels': {
                 'id': vm.vm,
+                'tags': ','.join(tags),
                 'guest_name': identity.name,
                 'guest_family': identity.family,
                 'guest_host_name': identity.host_name,
